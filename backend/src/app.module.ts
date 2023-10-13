@@ -13,7 +13,7 @@ import { PhotoEntity } from './entities/photo.entity';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'root',
+      password: 'Blendavve1993',
       database: 'orga_structure',
       entities: [UserEntity, PhotoEntity],
       synchronize: true,
