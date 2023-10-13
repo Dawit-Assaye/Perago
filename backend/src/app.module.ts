@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { PhotoEntity } from './entities/photo.entity';
+import { PositionModule } from './position/position.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PhotoEntity } from './entities/photo.entity';
       entities: [UserEntity, PhotoEntity],
       synchronize: true,
     }),
+    PositionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
