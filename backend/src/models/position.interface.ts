@@ -1,8 +1,8 @@
 export interface Position {
-    id?: number;
+    id?: string;
     name?: string;
     description?: string;
-    parent_id?: number;
+    parent_id?: string;
     report_to?:string;
   }
   

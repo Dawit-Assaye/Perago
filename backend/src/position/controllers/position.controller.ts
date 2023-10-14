@@ -1,9 +1,19 @@
 import { Observable } from 'rxjs';
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { PositionService } from 'src/position/services/position.service';
 import { Position } from 'src/models/position.interface';
-import { PositionGuard } from '../position.guard';
-import { UpdateResult } from 'typeorm';
+import { PositionGuard } from '../guards/position.guard';
+import { RootGuard } from '../guards/root.guard';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('position')
 export class PositionController {
@@ -11,6 +21,7 @@ export class PositionController {
 
   //createCeo
   @Post('root')
+    @UseGuards(RootGuard)
   createCeo(@Body() position: Position): Observable<Position> {
     return this.positionService.createPosition(position);
   }
@@ -24,8 +35,9 @@ export class PositionController {
 
   // updateCeo
   @Put('root/:id')
+  @UseGuards(RootGuard)
   updateCeo(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() position: Position,
   ): Observable<UpdateResult> {
     return this.positionService.updatePosition(id, position);
@@ -35,21 +47,33 @@ export class PositionController {
   @Put('child/:id')
   @UseGuards(PositionGuard)
   updateOther(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() position: Position,
   ): Observable<UpdateResult> {
     return this.positionService.updatePosition(id, position);
   }
 
   //get single position
-  @Get(":id")
-  singlePosition(@Param('id') id: number):Observable<Position>{
-    return this.positionService.findSinglePosition(id)
+  @Get(':id')
+  singlePosition(@Param('id') id: string): Observable<Position> {
+    return this.positionService.findSinglePosition(id);
+  }
+
+  //get childern
+  @Get(':id/children')
+  getChildrenPosition(@Param('id') id: string): Observable<Position[]> {
+    return this.positionService.findChildrenPosition(id);
   }
 
   //get all positions
   @Get()
   allPositions(): Observable<Position[]> {
     return this.positionService.findAllPositions();
+  }
+
+  //Remove Position
+  @Delete(':id')
+  removePosition(@Param('id') id: string): Observable<DeleteResult> {
+    return this.positionService.removePosition(id);
   }
 }
