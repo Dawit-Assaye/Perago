@@ -1,21 +1,26 @@
 import { MantineProvider } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Provider } from 'react-redux';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+// import { useForm } from "@mantine/form";
 import "./App.css";
 import "./index.css";
+import store from "./ducks/store";
+import About from "./components/About";
 
 function App() {
-    const form = useForm({
-      initialValues: {
-        name: "",
-        email: "",
-      },
-    });
   return (
-    <MantineProvider>
-      <div>
-        Hello World! am Dave.
-      </div>
-    </MantineProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <MantineProvider>
+          <Routes>
+            <Route
+              path="/About"
+              element={<About/>}
+            />
+          </Routes>
+        </MantineProvider>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

@@ -27,7 +27,7 @@ export class PositionController {
   }
 
   //createOther
-  @Post('child')
+  @Post('child/:id')
   @UseGuards(PositionGuard)
   createOther(@Body() position: Position): Observable<Position> {
     return this.positionService.createPosition(position);
