@@ -5,8 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { PhotoEntity } from './entities/photo.entity';
-import { PositionModule } from './position/position.module';
+// import { PositionModule } from './position/position.module';
 import { PositionEntity } from './models/position.entity';
+
 
 @Module({
   imports: [
@@ -17,18 +18,17 @@ import { PositionEntity } from './models/position.entity';
       username: 'postgres',
       password: 'Blendavve1993',
       database: 'orga_structure',
-      entities: [UserEntity, PhotoEntity,PositionEntity],
+      entities: [UserEntity, PhotoEntity, PositionEntity],
       synchronize: true,
     }),
-    PositionModule,
+    TypeOrmModule.forFeature([PositionEntity]),
+    // PositionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {
-console.log(dataSource.toString())
-
+    console.log(dataSource.toString());
   }
-
 }
