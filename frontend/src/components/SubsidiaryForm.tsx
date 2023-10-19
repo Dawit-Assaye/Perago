@@ -5,26 +5,30 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import { Card } from "@mantine/core";
-
 
 const schema = yup.object({
   name: yup.string().required("Name is required"),
   description: yup.string().required("Description is required"),
-  report_to: yup.string()
+  report_to: yup.string(),
 });
-type FormValues={
-  name:string
-  description:string
-}
 
-function Form() {
+type FormValues = {
+  name: string;
+  description: string;
+};
+
+
+function SubsidiaryForm() {
+  const { id } = useParams();
+
   const {
     register,
     handleSubmit,
-    formState: { errors,isSubmitSuccessful },
+    formState: { errors, isSubmitSuccessful },
     watch,
-    reset
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -33,48 +37,51 @@ function Form() {
 
   const nameValue = watch("name");
   const reporttoValue = watch("report_to");
-  
 
   const submitForm = async (data: FormValues) => {
-    try {
-     
-      const response = await axios.post("http://localhost:3001/position/root", data);
-      console.log("Form Submitted", data);
-      console.log("Response from the API:", response.data);
+   const formData = { ...data, parent_id: id };
+   console.log(formData);
+   try {
+     const response = await axios.post(
+       `http://localhost:3001/position/child/${id}`,
+       formData
+     );
+     console.log("Form Submitted", data);
+     console.log("Response from the API:", response.data);
 
-      toast.success("Form submitted successfully", {
-        position: "top-right",
-        autoClose: 3000, 
-      });
+     toast.success("Form submitted successfully", {
+       position: "top-right",
+       autoClose: 3000,
+     });
 
-      reset();
-    } catch (error) {
-      console.error("Error submitting the form:", error);
-     
-      toast.error("An error occurred while submitting the form", {
-        position: "top-right",
-        autoClose: 3000, 
-      });
-    }
-  }
+     reset();
+   } catch (error) {
+     console.error("Error submitting the form:", error);
 
+     toast.error("An error occurred while submitting the form", {
+       position: "top-right",
+       autoClose: 3000,
+     });
+   }
+  };
 
   React.useEffect(() => {
-    if (nameValue === "CEO" || reporttoValue ===  "Chiefe Executive Officer" ) {
+    if (nameValue === "CEO" || reporttoValue === "Chiefe Executive Officer") {
       setIsReportToDisabled(true);
     } else {
       setIsReportToDisabled(false);
     }
 
-    if(isSubmitSuccessful){
+    if (isSubmitSuccessful) {
       reset();
     }
-  }, [nameValue,isSubmitSuccessful,reset]);
+  }, [nameValue, isSubmitSuccessful, reset]);
 
   return (
     <div className="container ">
       <ToastContainer />
-      <Card
+      {/* <div className="Form bg-slate-300 text-green-600 rounded-md w-2/5 h-96 flex flex-col gap-2 justify-center align-middle m-auto mt-24"> */}
+           <Card
         shadow="sm"
         padding="lg"
         radius="md"
@@ -82,10 +89,7 @@ function Form() {
         className="Form bg-slate-300 text-green-600 rounded-md w-2/5 h-auto flex flex-col gap-2 justify-center align-middle m-auto mt-24"
       >
         <div className="title m-auto mb-4 mt-2 text-2xl font-semibold">
-          Create Position
-          <h6 className="text-red-500 text-sm font-thin">
-            *entering CEO "report_to" field will become inactive 
-          </h6>
+          Create Subsidiary Position
         </div>
         <div className="inputs flex flex-col m-auto mt-0 w-3/4">
           <form
@@ -125,4 +129,4 @@ function Form() {
   );
 }
 
-export default Form;
+export default SubsidiaryForm;

@@ -1,4 +1,4 @@
-import "./chart.css";
+// import "./chart.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
@@ -6,6 +6,7 @@ import { ThreeDots } from "react-loader-spinner";
 
 import Charts from "./Chart";
 import FirstTime from "./FirstTime";
+import { Loader } from "@mantine/core";
 
 interface Position {
   id: string;
@@ -95,19 +96,25 @@ function Home() {
     <div>
       {loading ? (
         // Render the loading spinner when loading is true
-        <div className="top-50% left-50%">
-        <ThreeDots
-          height="80"
-          width="80"
-          radius="9"
-          color="#4fa94d"
-          ariaLabel="three-dots-loading"
-          wrapperStyle={{}}
-          visible={true}
-        />
+
+        <div className="absolute left-1/2 top-1/2">
+          <Loader color="green" size="xl" type="bars" />
         </div>
-      ) : positions.length > 0 ? (
-        <Charts hierarchy={hierarchy} error={error} />
+      ) : // <ThreeDots
+      //   height="80"
+      //   width="80"
+      //   radius="9"
+      //   color="#4fa94d"
+      //   ariaLabel="three-dots-loading"
+      //   wrapperStyle={{}}
+      //   visible={true}
+      // />
+
+      hierarchy.length > 0 ? (
+        
+        <div className="chart-container w-4/5 mx-auto">
+          <Charts hierarchy={hierarchy} error={error}/>
+        </div>
       ) : (
         <FirstTime />
       )}

@@ -219,3 +219,9 @@ body {
   width: 25px;
   margin: 5px;
 }
+
+@media (max-width: 768px) {
+  .card {
+  width: 20px;
+  }
+}

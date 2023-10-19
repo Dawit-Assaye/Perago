@@ -22,15 +22,19 @@ export class AppController {
   //createCeo
   @Post('root')
   @UseGuards(RootGuard)
-  createCeo(@Body() position: Position): Observable<Position> {
-    return this.appService.createPosition(position);
+  createCeo(
+    @Body() position: Position,
+  ): Observable<Position> {
+    return this.appService.createPosition( position);
   }
 
   //createOther
-  @Post('child/:id')
+  @Post('child')
   @UseGuards(PositionGuard)
-  createOther(@Body() position: Position): Observable<Position> {
-    return this.appService.createPosition(position);
+  createOther(
+    @Body() position: Position,
+  ): Observable<Position> {
+    return this.appService.createPosition( position);
   }
 
   // updateCeo
