@@ -52,7 +52,17 @@ export class AppService {
     return from(this.positionRepository.find());
   }
 
-  removePosition(id: string): Observable<DeleteResult> {
-    return from(this.positionRepository.delete(id));
+ async removePosition(id: string): Promise<void> {
+    // Delete the current position by ID
+    await this.positionRepository.delete(id);
+
+    // Find all children with a matching parent_id
+    const children = await this.positionRepository.find({ where: { parent_id: id } });
+
+    // Recursively remove children
+    for (const child of children) {
+      await this.removePosition(child.id); // Recursive call to remove children
+    }
   }
+
 }

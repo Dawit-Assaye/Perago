@@ -6,13 +6,13 @@ import {
   createTheme,
   MantineColorsTuple,
 } from "@mantine/core";
-// import { Provider } from "react-redux";
+import { Provider } from "react-redux";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-// import store from "./ducks/store";
+import {store} from "./ducks/store";
 import About from "./components/About";
 import Home from "./components/Home";
 import Detail from "./components/Detail";
-import Form from "./components/Form";
+import Form from "./components/CreateForm";
 import UpdateRootForm from "./components/UpdateRootForm";
 import UpdateChildForm from "./components/UpdateChildForm";
 import SubsidiaryForm from "./components/SubsidiaryForm";
@@ -53,6 +53,7 @@ const theme = createTheme({
 
 function App() {
   return (
+    <Provider store={store}>
     <BrowserRouter>
       <MantineProvider theme={theme}>
         <Routes>
@@ -69,10 +70,7 @@ function App() {
         </Routes>
       </MantineProvider>
     </BrowserRouter>
-
-    // <Provider store={store}>
-    //
-    // </Provider>
+</Provider>
   );
 }
 

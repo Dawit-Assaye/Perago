@@ -9,14 +9,24 @@ import { useParams } from "react-router-dom";
 import { Card } from "@mantine/core";
 
 const schema = yup.object({
-  name: yup.string().required("Name is required"),
-  description: yup.string().required("Description is required"),
-  report_to: yup.string(),
+  name: yup
+    .string()
+    .matches(/^[A-Za-z\s]+$/, "Name can't contain numbers")
+    .required("Name is required"),
+  description: yup
+    .string()
+    .matches(/^[A-Za-z\s]+$/, "Description can't contain numbers")
+    .required("Description is required"),
+  report_to: yup
+    .string()
+    .matches(/^[A-Za-z]+$/, "Report to can't contain numbers")
+    .required("Please mention to whom to report"),
 });
 
 type FormValues = {
   name: string;
   description: string;
+  report_to:string
 };
 
 
@@ -36,14 +46,14 @@ function SubsidiaryForm() {
   const [isReportToDisabled, setIsReportToDisabled] = useState(false);
 
   const nameValue = watch("name");
-  const reporttoValue = watch("report_to");
+  const descriptionValue = watch("description");
 
-  const submitForm = async (data: FormValues) => {
+   const submitForm = async (data: FormValues) => {
    const formData = { ...data, parent_id: id };
-   console.log(formData);
+   console.log(formData,"form data");
    try {
      const response = await axios.post(
-       `http://localhost:3001/position/child/${id}`,
+       `http://localhost:3001/position/child`,
        formData
      );
      console.log("Form Submitted", data);
@@ -66,7 +76,7 @@ function SubsidiaryForm() {
   };
 
   React.useEffect(() => {
-    if (nameValue === "CEO" || reporttoValue === "Chiefe Executive Officer") {
+    if (nameValue === "CEO" || descriptionValue === "Chiefe Executive Officer") {
       setIsReportToDisabled(true);
     } else {
       setIsReportToDisabled(false);

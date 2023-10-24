@@ -6,12 +6,22 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { Card } from "@mantine/core";
-
+import { useAppDispatch,useAppSelector } from "../ducks/hooks";
+import { setPositions } from "../ducks/rawPositionSlice";
 
 const schema = yup.object({
-  name: yup.string().required("Name is required"),
-  description: yup.string().required("Description is required"),
-  report_to: yup.string()
+  name: yup
+    .string()
+    .matches(/^[A-Za-z]+$/, "Name can't contain numbers")
+    .required("Name is required"),
+  description: yup
+    .string()
+    .matches(/^[A-Za-z\s]+$/, "Description can't contain numbers")
+    .required("Description is required"),
+  report_to: yup
+    .string()
+    // .matches(/^[A-Za-z]+$/, "Report to can't contain numbers")
+    
 });
 type FormValues={
   name:string
@@ -19,6 +29,7 @@ type FormValues={
 }
 
 function Form() {
+  const dispatch=useAppDispatch()
   const {
     register,
     handleSubmit,
@@ -41,6 +52,7 @@ function Form() {
       const response = await axios.post("http://localhost:3001/position/root", data);
       console.log("Form Submitted", data);
       console.log("Response from the API:", response.data);
+// dispatch(setPosition())
 
       toast.success("Form submitted successfully", {
         position: "top-right",
@@ -84,7 +96,7 @@ function Form() {
         <div className="title m-auto mb-4 mt-2 text-2xl font-semibold">
           Create Position
           <h6 className="text-red-500 text-sm font-thin">
-            *entering CEO "report_to" field will become inactive 
+            *On entering CEO "report_to" field will become inactive 
           </h6>
         </div>
         <div className="inputs flex flex-col m-auto mt-0 w-3/4">

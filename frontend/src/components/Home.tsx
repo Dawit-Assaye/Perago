@@ -1,12 +1,15 @@
 // import "./chart.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { ThreeDots } from "react-loader-spinner";
 
+import { useAppSelector, useAppDispatch } from "../ducks/hooks";
+import { setPositions } from "../ducks/rawPositionSlice";
+import { Loader } from "@mantine/core";
+
+import { ThreeDots } from "react-loader-spinner";
 
 import Charts from "./Chart";
 import FirstTime from "./FirstTime";
-import { Loader } from "@mantine/core";
 
 interface Position {
   id: string;
@@ -27,13 +30,16 @@ interface HierarchyNode {
 }
 
 function Home() {
-  const [positions, setPositions] = useState(defaultPositions); //redux
+  //redux
+  const rawPositionArray = useAppSelector((state) => state.rawPosition.value);
+  const dispatch = useAppDispatch();
+
+//  const [positions, setPositionData] = useState(defaultPositions);
   const [loading, setLoading]: [boolean, (loading: boolean) => void] =
     useState<boolean>(true);
   const [error, setError]: [string, (error: string) => void] = useState("");
 
   function convertToHierarchy(inputArray: Position[]) {
-    // Create a mapping from id to node object for efficient access.
     const idToNode: Record<string, HierarchyNode> = {};
     inputArray.forEach((item) => {
       idToNode[item.id] = {
@@ -57,12 +63,22 @@ function Home() {
     return hierarchy;
   }
 
-  const hierarchy = convertToHierarchy(positions);
+  const hierarchy = convertToHierarchy(rawPositionArray);
 
   // Output the hierarchy
   console.log(hierarchy, "hierarchy");
 
   useEffect(() => {
+      console.log("useState starting");
+      console.log(rawPositionArray,"type of raw")
+      if (rawPositionArray.length>0) {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }else{
+
+  console.log("in axios")
+
     axios
       .get<Position[]>("http://localhost:3001/position/list", {
         headers: {
@@ -70,12 +86,12 @@ function Home() {
         },
       })
       .then((response) => {
-        // dispatch(setPositions(response.data));
-        setPositions(response.data);
-        console.log(response.data, "here");
-       setTimeout(() => {
-         setLoading(false);
-       }, 1000);
+        dispatch(setPositions(response.data));
+        // setPositionData(response.data);
+        // console.log(response.data, "here axios request");
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       })
       .catch((ex) => {
         console.log(ex);
@@ -84,12 +100,13 @@ function Home() {
             ? "Resource Not found"
             : "An unexpected error has occurred";
         setError(error);
-  setTimeout(() => {
-    setLoading(false);
-  }, 1000);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       });
+    }
   }, []);
-  console.log(positions, "raw position");
+  console.log(rawPositionArray, "raw position");
 
   console.log("it is working");
   return (
@@ -111,9 +128,8 @@ function Home() {
       // />
 
       hierarchy.length > 0 ? (
-        
         <div className="chart-container w-4/5 mx-auto">
-          <Charts hierarchy={hierarchy} error={error}/>
+          <Charts hierarchy={hierarchy} error={error} />
         </div>
       ) : (
         <FirstTime />

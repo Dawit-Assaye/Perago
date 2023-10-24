@@ -2,18 +2,28 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Position from "./Position";
 import { useParams } from "react-router-dom";
-import { Card } from "@mantine/core";
+import { Card, Loader } from "@mantine/core";
+import {useAppDispatch } from "../ducks/hooks";
+import { updateRootPosition } from "../ducks/rawPositionSlice";
 
 const schema = yup.object({
-  name: yup.string().required("Name is required"),
-  description: yup.string().required("Description is required"),
-  report_to: yup.string(),
+  name: yup
+    .string()
+    .matches(/^[A-Za-z]+$/, "Name can't contain numbers")
+    .required("Name is required"),
+  description: yup
+    .string()
+    .matches(/^[A-Za-z\s]+$/, "Description can't contain numbers")
+    .required("Description is required"),
+  report_to: yup
+    .string()
+    .matches(/^[A-Za-z]+$/, "Report to can't contain numbers"),
 });
 type FormValues = {
   name: string;
@@ -21,6 +31,9 @@ type FormValues = {
 };
 
 function UpdateRootForm() {
+  //redux
+  const dispatch = useAppDispatch();
+
   const { id } = useParams();
 
   const {
@@ -34,6 +47,12 @@ function UpdateRootForm() {
   });
 
   const [isReportToDisabled, setIsReportToDisabled] = useState(false);
+    const [loading, setLoading]: [boolean, (loading: boolean) => void] =
+    useState<boolean>(true);
+
+      setTimeout(() => {
+          setLoading(false);
+        }, 1000);
 
   const nameValue = watch("name");
   const reporttoValue = watch("report_to");
@@ -46,6 +65,8 @@ function UpdateRootForm() {
       );
       console.log("Form Submitted", data);
       console.log("Response from the API:", response.data);
+
+      dispatch(updateRootPosition({ id, data }));
 
       toast.success("Form submitted successfully", {
         position: "top-right",
@@ -63,7 +84,7 @@ function UpdateRootForm() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (nameValue === "CEO" || reporttoValue === "Chiefe Executive Officer") {
       setIsReportToDisabled(true);
     } else {
@@ -78,6 +99,12 @@ function UpdateRootForm() {
   return (
     <div className="container ">
       <ToastContainer />
+         {loading ? (
+        // Render the loading spinner when loading is true
+        <div className="absolute left-1/2 top-1/2">
+          <Loader color="green" size="xl" type="bars" />
+        </div>
+      ) : (
       <Card
         shadow="sm"
         padding="lg"
@@ -128,8 +155,9 @@ function UpdateRootForm() {
           </form>
         </div>
       </Card>
+      )}
     </div>
   );
-}
+};
 
 export default UpdateRootForm;

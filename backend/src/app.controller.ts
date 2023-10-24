@@ -79,7 +79,7 @@ export class AppController {
 
   //Remove Position
   @Delete(':id')
-  removePosition(@Param('id') id: string): Observable<DeleteResult> {
+  removePosition(@Param('id') id: string): Promise<void> {
     return this.appService.removePosition(id);
   }
 }
